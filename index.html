@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عالمنا الخاص ❤️</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.5)), 
+                        url('https://i.postimg.cc/v8rYB5P9/lqtt-shasht-2026-07-30-161535.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            overflow-x: hidden;
+            padding: 20px 10px;
+        }
+
+        /* شاشة كلمة السر */
+        .pass-screen {
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 35px 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .pass-screen h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+        }
+
+        .pass-screen input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* الزرار الموحد */
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.5);
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 25px rgba(255, 65, 108, 0.9);
+        }
+
+        /* شاشات الرسائل الانتقالية */
+        .intro-message-screen {
+            display: none;
+            background: rgba(15, 5, 10, 0.75);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            padding: 35px 25px;
+            border-radius: 25px;
+            box-shadow: 0 0 35px rgba(255, 65, 108, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.1);
+            border: 1.5px solid rgba(255, 107, 129, 0.6);
+            width: 90%;
+            max-width: 550px;
+            transform: scale(0.3);
+            opacity: 0;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.8s ease;
+        }
+
+        .intro-message-screen.zoom-in {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .intro-header {
+            font-size: 24px;
+            color: #ff416c;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255, 65, 108, 0.8);
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); }
+        }
+
+        .intro-message-screen h2 {
+            font-size: 18px;
+            color: #ffffff;
+            line-height: 1.8;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+            font-weight: 500;
+            min-height: 120px;
+        }
+
+        /* شاشة عرض الصور */
+        .gallery-screen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .gallery-container {
+            position: relative;
+            width: 90%;
+            height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .gallery-img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(255, 75, 43, 0.3);
+            position: absolute;
+            opacity: 0;
+            transform: scale(0.8) rotate(-5deg);
+            transition: opacity 1.2s ease-in-out, transform 1.2s ease-in-out;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            object-fit: contain;
+        }
+
+        .gallery-img.active {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+            z-index: 2;
+        }
+
+        .gallery-img.first-img.active {
+            transform: scale(1.25) rotate(0deg) !important;
+            box-shadow: 0 15px 50px rgba(255, 75, 43, 0.7) !important;
+            border: 3.5px solid rgba(255, 255, 255, 0.6) !important;
+        }
+        
+        .gallery-img.exit {
+            opacity: 0;
+            transform: scale(1.1) rotate(5deg);
+            z-index: 1;
+        }
+
+        /* المحتوى الرئيسي */
+        .main-content {
+            display: none;
+            width: 95%;
+            max-width: 700px;
+            margin: 20px auto;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 30px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .main-content h1 {
+            font-size: 26px;
+            margin: 25px 0 15px 0;
+            color: #ff85a2;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+        }
+
+        .main-content p {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+            font-weight: 400;
+        }
+
+        /* عداد الوقت */
+        .counter-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            margin-bottom: 20px;
+        }
+
+        .time-unit {
+            font-size: 15px;
+            min-width: 65px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+
+        .time-unit span {
+            display: block;
+            font-size: 30px;
+            font-weight: bold;
+            color: #ff6b81;
+            text-shadow: 0 2px 8px rgba(255, 107, 129, 0.6);
+        }
+
+        /* أنيميشن القلوب */
+        .heart {
+            position: fixed;
+            top: -1vh;
+            font-size: 24px;
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear forwards;
+            z-index: 1000;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(105vh) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- عنصر الصوت الخلفي (تكرار تلقائي) -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://files.catbox.moe/rsqv1t.m4a" type="audio/mp4">
+    </audio>
+
+    <!-- 1. شاشة كلمة السر -->
+    <div class="pass-screen" id="passScreen">
+        <h2>ممكن توقعيلي هنا يا جميل☺️💖</h2>
+        <input type="password" id="passInput" placeholder="ريماس💖">
+        <button class="btn-action" onclick="checkPassword()">دخول</button>
+        <p id="errorMsg" style="color: #ff6b6b; margin-top: 15px; display: none; font-size: 14px; text-shadow: 0 1px 3px #000;">كلمة السر مش صحيحة، جربي تاني ❤️</p>
+    </div>
+
+    <!-- 2. شاشة الاعتراف الأول (رسالة انتي حرامية) -->
+    <div class="intro-message-screen" id="introScreen">
+        <div class="intro-header">كنت عايز اقولك </div>
+        <h2 id="typedText"></h2>
+        <button class="btn-action" id="nextBtn" style="opacity: 0; transition: opacity 0.5s;" onclick="startImageSequence()">التالي ❤️</button>
+    </div>
+
+    <!-- 3. شاشة عرض الصور -->
+    <div class="gallery-screen" id="galleryScreen">
+        <div class="gallery-container">
+            <img src="https://i.postimg.cc/MnD5pF5m/image.jpg" class="gallery-img first-img" alt="صورة 1">
+            <img src="https://i.postimg.cc/9Frg2XP2/IMG-20260406-131124.jpg" class="gallery-img" alt="صورة 2">
+            <img src="https://i.postimg.cc/269d9vKn/IMG-20260412-061016.jpg" class="gallery-img" alt="صورة 3">
+            <img src="https://i.postimg.cc/XJPFkWrn/ruu.jpg" class="gallery-img" alt="صورة 4">
+            <img src="https://i.postimg.cc/PNsw0Mzk/IMG-20260412-060955.jpg" class="gallery-img" alt="صورة 5">
+            <img src="https://i.postimg.cc/tRLvXQB7/Screenshot-2026-04-07-04-51-35-510-com-zhiliaoapp-musically.jpg" class="gallery-img" alt="صورة 6">
+            <img src="https://i.postimg.cc/W3dSvXrW/Whats-App-Image-2026-06-24-at-12-22-27-PM.jpg" class="gallery-img" alt="صورة 7">
+        </div>
+    </div>
+
+    <!-- 4. شاشة الرسالة الثانية بعد الصور (الرسالة العاطفية الجديدة) -->
+    <div class="intro-message-screen" id="secondMessageScreen">
+        <div class="intro-header">ممكن تسمعيني لغايه الاخر 😇🥹</div>
+        <h2 id="typedText2"></h2>
+        <button class="btn-action" id="finalBtn" style="opacity: 0; transition: opacity 0.5s;" onclick="goToMainContent()">كملي معايا ❤️</button>
+    </div>
+
+    <!-- 5. المحتوى الأساسي (الصفحة الأخيرة) -->
+    <div class="main-content" id="mainContent">
+        <div class="counter-box">
+            <div class="time-unit"><span id="days">0</span> يوم</div>
+            <div class="time-unit"><span id="hours">0</span> ساعة</div>
+            <div class="time-unit"><span id="minutes">0</span> دقيقة</div>
+            <div class="time-unit"><span id="seconds">0</span> ثانية</div>
+        </div>
+
+        <h1>نفسي اعرف عملتي اي في قلبي علشان يحبك كل الحب ده و يعشقك❤️ واسف لو الكلام كتير بس صدقيني كل ده خارج من قلبي ومش بقيت اعرف اعبر و اوصلك الي في قلبي غير بالطريقه دي اسف بجد لو الكلام كتير بس ممكن تقرأ لان بجد انا تعبت عقبال ما عملت كل ده</h1>
+        <p>
+            عايز اقولك انك مش مجرد بنت بحبها انتي الحياه اللي اتمنيتها من سنين انتي الحلم اللي👸🏻🥺💗 صحيت عليه ولقيته قدامي انتي الامان اللي قلبي ارتاح فيه والدفا💗💗🌍 اللي بحس بيه انتي اجمل من كل الكلام اللي بيتقال واحن من كل حضن اتخيلته🌍🌚 انتي مش بس حبيبتي انتي دنيتي انتي اخت روحي انتي ملاكي اللي ربنا بعتهولي.🌍👌🏻
+من أول ما عرفتك وانا مش زي زمان كل حاجه بقت ليها طعم تاني الضحكه بقت من القلب🫀🎀 والدنيا بقت فيها أمل بقيت بصحى وانا مبسوط عشان انتي في حياتي بقيت بحب اليوم💞💜 اللي بيعدي وانتي فيه . بقيت بضحك على حاجات بسيطة لان وجودك بيكفيني بقيت بدعي من قلبي انك تفضلي معايا العمر كله✨🤎
+انتي اللي غيرتيني للأحسن انتي اللي خلتيني أعرف يعني ايه حب حقيقي انتي النور اللي دخل قلبي ومفارقنيش انتي❤️‍🔥🍫 النسمة اللي بتهدى قلبي وقت الزعل لما بشوفك بضحك من غير ما أحس لما بسمع🐣🫶🏻 صوتك بتهدى كل حاجة جوايا لما تبعتيلي مسدج قلبي بيرقص لما بتقوليلي وحشتني بحس اني أسعد إنسان انتي كل💗🌝 حاجه حلوة حصلتلي انتي اللي بخاف عليها من الهوا انتي اللي بحس اني مش عايز منها غير رضاها انا بحب كل🌝🌝 تفاصيلك بحب صوتك بحب ضحكتك بحب عصبيتك بحب طريقتك وانتي بتزعلي🫶🏻🫶🏻بحب خناقك لما كنتي بتغيري عليا و بحب طيبة قلبك بحب عيونك وهى بتلمع بحبك لما كنتي بتخافي عليا ولما كنتي بتهتمي بيا انتي سبب ضحكتي انتي🌝🐣 سندي في الوجع انتي كتفي لما بتعب انتي قلبي اللي بيدق عشانك كل ثانيه انتي بتملي حياتي فرحة 🌍✨ وضحكة حقيقية من القلب انتي ملاك نزل عشاني انتي هدية ربنا ادهاني ... كل يوم بدعي انك تفضلي ليا كل🤎 يوم بشكر ربنا انك في حياتي كل يوم بحبك أكثر كل ثانيه بتمر وانتي معايا بتكون أغلى ثانيه في حياتي انتي بتمثليلي حاجات كتير انتي بنتي وانا بابا وحبيبك انتي اميرتي وعشقي وكل حاجه ليا وجودك شفاء لقلبي وانتي روحي اللي سكنت جوايا بحب اووي نظرتك لما بتبصيلي بحس اني مهم في🫶🏻🫶🏻💗 حياتك لان انتي اهم حد في حياتي🫶🏻 
+يوسف بيحبك اوووي يا رموسه🫶🏻🫶🏻🫶🏻
+        </p>
+    </div>
+
+    <script>
+        const secretPassword = "ريماس"; 
+        const startDate = new Date(2026, 3, 6); 
+
+        const fullMessage1 = "انتي دلوقتي وقعتي انك حراميه و سرقتي قلب يوسف بنظره عينك انتي مش سارقة قلبي بس... إنتي سارقة عقلي وتفكيري كمان! من ساعة ما شفتك وأنا تايه، مش عارف أركز في حاجة، كل اللي في دماغي رموسه وابتسامه رموسه عايز اقولك لو فيه محكمة للحب، هاشهد إنك مذنبة...و هقول للقاضي أنا راضي بالحكم وعايز أعيش عمري كله في السجن ده معاكي بحبككككككك اوي و بدعي انك تكوني ليا يا اجمل اميره في الدنيا كلها يا تاج راسي🫶🏻";
+
+        const fullMessage2 = "نفسي تشوفي انا قد اي بحبك ومتمسك بيكي لغايه اخر نفس وقد الاختبار و بصدق اي حاجه منك الان عارف ريماس عمرها ما اتربت علي الخيانه ولا الكدب لا بالعكس دي بنت ناس و متربيه واكيد الهام مش واثقه فيكي كدا وكمان انا مش هثق فيكي كدا انتي حب يوسف الاول وكمان انا اول شخص في حياتك نفسي اعرفك انتي مكانتك فين في قلبي و تعرفي ان يوسف عمره ما يأذي ريماس ابدا لان ريماس دي روح يوسف و يوسف اصلا بيخاف عليها من الهواء الطاير نفسي تعرفي انا ضحيب بي اي علشانك وممكن اضحي بي اي حاجه علشان عيونك و صدقيني لو كنت عايز اقول اي حاجه لي الهام كنت قولت من بدري نفسي اوي تثقي فيا زي زمان ده انتي وثقتي فيا من اول يوم (يوم6 شهر 4)مش كنا نعرف بعض اصلا اشمعنا دلوقتي مش واثقه في يوسف بس صدقيني والله عمري ما اذيكي ابدا يا رموستي انتي حيات يوسف اصلا انسي  ان اخليكي في يوم تنزلي دمعه من عينك علشان وقتها لو شوفت دمعتك انا هخرب الدنيا علشان عيونك نفسي ترجعي تحبيني زي زمان وتخافي عليا وتهتمي بيا لان فعلا والله احنا مش لينا غير بعض احنا سستمنا حيتنا اصلا علي بعض والله العظيم انتي الشخص اللي بدعي يفضل معايا للآخر🦋❤️ ده انتي اللي نفسي اعيش معاكي كل🥹♥️ لحظه انتي اللي بستنى أشوفك كل يوم وكأنها أول مرة انتي الحب اللي مستحيل يتكرر انتي حبيبتي اللي بحبها من غير سبب انتي🫂💍 اللي لو الدنيا كلها اتغيرت هتفضلي ثابتة جوا قلبي انتي اللي وجودك بيهون عليا كل حاجه انتي اللي🌚✨🥺 بفتكرها أول ما أصحى وآخر ما أنام انتي أجمل واحن حب واطيب قلب انتي روحي وسر سعادتي نفسي اوي تبطلي كلمه مش هينفع الي من غير سبب بقولك انا احارب و اعمل اي حاجه علشانك علي العموم  بجد ده وعد مني ليكي لو عايزه تسبيني خالص و خايفه مني فعلا و مافيش ثقه بس خايفه تسبيني علشان ممكن اقول حاجه لي الهام تكوني غلطانه انا عمري بجد ما اعمل كدا يا بت انتي بنتي عارفه يعني اي بجد لو فعلا مش مستريحه و قلقانه مني اعملي بلوك و وعد مني ليكي  الهام مش هتعرف حاجه خالص ابدا انا بس هفضل احبك من بعيد و في السر وده وعد مني ليكي اكيد انتي عارفه ان انا لما بوعد بوفي 🫴🫴 يااما تخليكي معايا و نبعت الاموجي لي بعض كل يوم و انشاء الله نكون مع بعض لان فعلا والله مش لينا غير بعض وان كل ده اختبار لي حبنا و اختبار من عند ربنا علشان نكون مع بعض بالحلال وانا بردوا اوعدك هعملك كل الي انتي عاوزه بس ونبي اهدي وبطلي خوف انتي قويه يا رموستي اوعي تخافي انا معاكي و هسندك و كمان نسيتي ان انا امانك في اي وقت بس ممكن لو مشيتي ينفع تبقي تيجي يوم عيد ميلادك نفسي اووي اكون معاكي شويه يوم 13 اكتوبر بصراحه انا كان نفسي اووي اكون معاكي في اليوم ده كنت بحلم بي كدا و خلاص اهوو قرب 🥹♥️ نفسي اوي تفضلي بس وانتي عايزه مش غصب عنك لان مش عايز كدا ومش عارف لو قررت انك تمشي اسيبك لمين بس 😭 اصلا انتي نعمه كبيره في حيات اي شخص اتمني ما تضيع مني🥺🥺 ";
+
+        /* تشغيل الموسيقى */
+        function playAudio() {
+            const audio = document.getElementById('bgMusic');
+            audio.play().catch(err => {
+                console.log("تعذر التشغيل التلقائي:", err);
+            });
+        }
+
+        /* 1. التحقق من كلمة السر وتشغيل الموسيقى */
+        function checkPassword() {
+            const input = document.getElementById('passInput').value;
+            if (input === secretPassword) {
+                playAudio(); // يبدأ تشغيل الموسيقى فور الضغط الصحيح على زر الدخول
+                document.getElementById('passScreen').style.display = 'none';
+                showIntroMessage(); 
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+
+        /* 2. عرض شاشة "انتي حرامية" */
+        function showIntroMessage() {
+            const introScreen = document.getElementById('introScreen');
+            introScreen.style.display = 'block';
+            
+            setTimeout(() => {
+                introScreen.classList.add('zoom-in');
+            }, 50);
+
+            let charIndex = 0;
+            const typedTextElement = document.getElementById('typedText');
+            const nextBtn = document.getElementById('nextBtn');
+
+            function typeWriter() {
+                if (charIndex < fullMessage1.length) {
+                    typedTextElement.innerHTML += fullMessage1.charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeWriter, 35);
+                } else {
+                    nextBtn.style.opacity = '1';
+                }
+            }
+
+            setTimeout(typeWriter, 800);
+        }
+
+        /* 3. عرض الصور */
+        function startImageSequence() {
+            document.getElementById('introScreen').style.display = 'none';
+            
+            const galleryScreen = document.getElementById('galleryScreen');
+            const images = document.querySelectorAll('.gallery-img');
+            
+            let currentIndex = 0;
+            const displayTime = 3500; 
+            const animTime = 1200;    
+
+            galleryScreen.style.display = 'flex';
+
+            function showNextImage() {
+                if (currentIndex >= images.length) {
+                    setTimeout(() => {
+                        galleryScreen.style.display = 'none';
+                        showSecondMessage(); 
+                    }, 500);
+                    return;
+                }
+
+                const currentImg = images[currentIndex];
+                currentImg.classList.add('active');
+
+                if (currentIndex > 0) {
+                    const prevImg = images[currentIndex - 1];
+                    prevImg.classList.remove('active');
+                    prevImg.classList.add('exit');
+                    setTimeout(() => prevImg.classList.remove('exit'), animTime);
+                }
+
+                currentIndex++;
+                setTimeout(showNextImage, displayTime);
+            }
+
+            setTimeout(showNextImage, 500);
+        }
+
+        /* 4. عرض شاشة الرسالة الجديدة بعد الصور */
+        function showSecondMessage() {
+            const secondScreen = document.getElementById('secondMessageScreen');
+            secondScreen.style.display = 'block';
+            
+            setTimeout(() => {
+                secondScreen.classList.add('zoom-in');
+            }, 50);
+
+            let charIndex = 0;
+            const typedTextElement = document.getElementById('typedText2');
+            const finalBtn = document.getElementById('finalBtn');
+
+            function typeWriter2() {
+                if (charIndex < fullMessage2.length) {
+                    typedTextElement.innerHTML += fullMessage2.charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeWriter2, 35);
+                } else {
+                    finalBtn.style.opacity = '1';
+                }
+            }
+
+            setTimeout(typeWriter2, 800);
+        }
+
+        /* 5. الانتقال للصفحة الأخيرة */
+        function goToMainContent() {
+            document.getElementById('secondMessageScreen').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            startHearts();
+            startCounter();
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerText = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 2 + 3 + 's';
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+
+        function startHearts() {
+            setInterval(createHeart, 300);
+        }
+
+        function startCounter() {
+            function update() {
+                const now = new Date();
+                const difference = now - startDate;
+
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((difference / (1000 * 60) ) % 60);
+                const seconds = Math.floor((difference / 1000) % 60);
+
+                document.getElementById('days').innerText = days;
+                document.getElementById('hours').innerText = hours;
+                document.getElementById('minutes').innerText = minutes;
+                document.getElementById('seconds').innerText = seconds;
+            }
+            update();
+            setInterval(update, 1000);
+        }
+    </script>
+</body>
+</html>
